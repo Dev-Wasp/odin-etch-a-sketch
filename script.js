@@ -1,17 +1,20 @@
 const CONTAINER_WIDTH = 400;
+const INITIAL_CELLS_NUM = 16 * 16;
 
 const gridContainer = document.querySelector(".container");
 const gridSizeBtn = document.querySelector(".grid-size-btn")
 const rainbowModeBtn = document.querySelector(".rainbow-mode-btn");
+const paintModeBtn = document.querySelector(".paint-mode-btn");
 
 let rainbowModeEngaged = false;
+let paintModeEngaged = false;
 
-for (let i = 0; i < 16 * 16; i++) {
-  const gridCell = document.createElement("div");
-  gridCell.classList.add("cell");
+createTheGrid(INITIAL_CELLS_NUM);
 
-  gridContainer.appendChild(gridCell);
-}
+gridSizeBtn.addEventListener("click", () => {
+  const numOfCells = getNumberOfCells();
+  createTheGrid(numOfCells);
+});
 
 rainbowModeBtn.addEventListener("click", () => {
   rainbowModeBtn.classList.toggle("active");
@@ -20,6 +23,20 @@ rainbowModeBtn.addEventListener("click", () => {
     rainbowModeEngaged = false;
   } else {
     rainbowModeEngaged = true;
+
+    disengageMode("paintMode");
+  }
+});
+
+paintModeBtn.addEventListener("click", () => {
+  paintModeBtn.classList.toggle("active");
+
+  if (paintModeEngaged) {
+    paintModeEngaged = false;
+  } else {
+    paintModeEngaged = true;
+
+    disengageMode("rainbowMode");
   }
 });
 
@@ -30,30 +47,19 @@ gridContainer.addEventListener("mouseover", e => {
 
   if (rainbowModeEngaged) {
     cell.style.backgroundColor = getRandomRGB();
-  } else {
+  } else if (paintModeEngaged) {
+    increaseOpacity(cell);
+  }
+  else {
     cell.style.backgroundColor = "#333";
   }
-});
-
-function getRandomRGB() {
-  const randomRedValue = Math.floor(Math.random() * 256);
-  const randomGreenValue = Math.floor(Math.random() * 256);
-  const randomBlueValue = Math.floor(Math.random() * 256);
-
-  const rgbStr = `rgb(${randomRedValue}, ${randomGreenValue}, ${randomBlueValue})`;
-
-  return rgbStr;
-}
-
-gridSizeBtn.addEventListener("click", () => {
-  const numOfCells = getNumberOfCells();
-  createTheGrid(numOfCells);
 });
 
 function getNumberOfCells() {
   let numOfCellsInRow;
 
   do {
+    // parseFloat is used because if the parseInt were to be used instead, it would get the value even if the user enters a float, leading to confusion
     numOfCellsInRow = parseFloat(prompt("Enter the new number of cells in a row: "));
 
     const isNaN = numOfCellsInRow === NaN;
@@ -67,7 +73,7 @@ function getNumberOfCells() {
     }
   } while (numOfCellsInRow === null);
 
-  const numOfCells = numOfCellsInRow**2;
+  const numOfCells = numOfCellsInRow ** 2;
 
   return numOfCells;
 }
@@ -83,6 +89,8 @@ function createTheGrid(numOfCells) {
 }
 
 function calcNewCellWidth(numOfCells) {
+  // This calculation divides the container width by the number of cells in one row to get the perfect width for a single cell. Since this value can be a float with high precision, it also rounds it to one digit after the period.
+  // Math.floor is used instead of Math.round to prevent overflowing of cells in rare cases
   const newCellWidth = Math.floor((CONTAINER_WIDTH / Math.sqrt(numOfCells)) * 10) / 10;
 
   return newCellWidth;
@@ -111,4 +119,37 @@ function removeOldCells() {
 
 function addNewCells(newCells) {
   newCells.forEach(cell => gridContainer.appendChild(cell));
+}
+
+function disengageMode(modeName) {
+  if (modeName === "rainbowMode" && rainbowModeEngaged) {
+    rainbowModeBtn.dispatchEvent(new Event("click"));
+  } else if (modeName === "paintMode" && paintModeEngaged) {
+    paintModeBtn.dispatchEvent(new Event("click"));
+  }
+}
+
+function getRandomRGB() {
+  const randomRedValue = Math.floor(Math.random() * 256);
+  const randomGreenValue = Math.floor(Math.random() * 256);
+  const randomBlueValue = Math.floor(Math.random() * 256);
+
+  const rgbStr = `rgb(${randomRedValue}, ${randomGreenValue}, ${randomBlueValue})`;
+
+  return rgbStr;
+}
+
+function increaseOpacity(cell) {
+  const backgroundColor = cell.style.backgroundColor;
+  const isRGBA = backgroundColor.split('').includes('a');
+
+  if (backgroundColor === '') {
+    cell.style.backgroundColor = "rgba(0, 0, 0, 0.1)";
+  } else if (isRGBA) {
+    const opacity = parseFloat(backgroundColor.slice(-4, -1));
+
+    cell.style.backgroundColor = `rgba(0, 0, 0, ${opacity + 0.1})`;
+
+    // There is no check for if the opacity is 1.0 because style.backgroundColor returns an rgb string in this case, which wouldn't pass the isRGBA check
+  }
 }
