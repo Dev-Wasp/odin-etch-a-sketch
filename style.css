@@ -12,25 +12,46 @@
 
   width: 422px;
   padding: 10px;
-  margin: 50px auto;
-
+  margin: auto;
   border: 1px solid #000;
 }
 
 .cell {
   width: 25px;
   height: 25px;
-
   border: 1px solid #000;
 }
 
-.grid-size-btn {
-  display: block;
+.btns {
+  border: 1px solid black;
+  width: 422px;
+  margin: 25px auto 5px;
+  padding: 10px;
 
-  margin: 25px auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.grid-size-btn {
   padding: 5px 20px;
   border: 1px solid #000;
   border-radius: 0;
 
   font-size: 16px;
+
+  flex: 100%;
+}
+
+.rainbow-mode-btn {
+  padding: 5px 20px;
+  border: 1px solid #000;
+  border-radius: 0;
+
+  font-size: 16px;
+}
+
+.active {
+  background-color: #b8b7b7;
 }

@@ -1,7 +1,10 @@
+const CONTAINER_WIDTH = 400;
+
 const gridContainer = document.querySelector(".container");
 const gridSizeBtn = document.querySelector(".grid-size-btn")
+const rainbowModeBtn = document.querySelector(".rainbow-mode-btn");
 
-const CONTAINER_WIDTH = 400;
+let rainbowModeEngaged = false;
 
 for (let i = 0; i < 16 * 16; i++) {
   const gridCell = document.createElement("div");
@@ -10,13 +13,37 @@ for (let i = 0; i < 16 * 16; i++) {
   gridContainer.appendChild(gridCell);
 }
 
+rainbowModeBtn.addEventListener("click", () => {
+  rainbowModeBtn.classList.toggle("active");
+
+  if (rainbowModeEngaged) {
+    rainbowModeEngaged = false;
+  } else {
+    rainbowModeEngaged = true;
+  }
+});
+
 gridContainer.addEventListener("mouseover", e => {
   const cell = (e.target.classList.contains("cell")) ? e.target : null;
 
   if (!cell) return;
 
-  cell.style.backgroundColor = "#333";
+  if (rainbowModeEngaged) {
+    cell.style.backgroundColor = getRandomRGB();
+  } else {
+    cell.style.backgroundColor = "#333";
+  }
 });
+
+function getRandomRGB() {
+  const randomRedValue = Math.floor(Math.random() * 256);
+  const randomGreenValue = Math.floor(Math.random() * 256);
+  const randomBlueValue = Math.floor(Math.random() * 256);
+
+  const rgbStr = `rgb(${randomRedValue}, ${randomGreenValue}, ${randomBlueValue})`;
+
+  return rgbStr;
+}
 
 gridSizeBtn.addEventListener("click", () => {
   const numOfCells = getNumberOfCells();
