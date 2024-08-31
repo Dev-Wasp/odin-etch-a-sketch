@@ -8,6 +8,7 @@
 .container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 
   width: 422px;
   padding: 10px;
@@ -21,4 +22,15 @@
   height: 25px;
 
   border: 1px solid #000;
+}
+
+.grid-size-btn {
+  display: block;
+
+  margin: 25px auto;
+  padding: 5px 20px;
+  border: 1px solid #000;
+  border-radius: 0;
+
+  font-size: 16px;
 }
